@@ -13,6 +13,9 @@ fi
 
 export GNOCCHI_DATA=$(mktemp -d -t gnocchi.XXXX)
 
+echo "* Installing pifpaf"
+pip install -q --force-reinstall git+https://github.com/tobias-urdin/pifpaf@51f74a3d8743a7ac33259413df7efc30df993460
+
 echo "* Installing Gnocchi from ${GNOCCHI_VERSION_FROM}"
 pip install -q --force-reinstall git+https://github.com/gnocchixyz/gnocchi.git@${GNOCCHI_VERSION_FROM}#egg=gnocchi[${GNOCCHI_VARIANT}]
 
