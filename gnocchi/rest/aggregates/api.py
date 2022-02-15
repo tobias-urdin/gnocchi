@@ -32,6 +32,13 @@ from gnocchi import storage
 from gnocchi import utils
 
 
+try:
+  import pyparsing.exceptions as pyparse_exc
+  PARSE_EXCEPTION = pyparse_exc.ParseException
+except ImportError:
+  PARSE_EXCEPTION = pyparsing.ParseException
+
+
 def _OperationsSubNodeSchema(v):
     return OperationsSubNodeSchema(v)
 
@@ -128,7 +135,7 @@ def OperationsSchema(v):
         try:
             v = pyparsing.OneOrMore(
                 pyparsing.nestedExpr()).parseString(v).asList()[0]
-        except pyparsing.ParseException as e:
+        except PARSE_EXCEPTION as e:
             api.abort(400, {"cause": "Invalid operations",
                             "reason": "Fail to parse the operations string",
                             "detail": six.text_type(e)})

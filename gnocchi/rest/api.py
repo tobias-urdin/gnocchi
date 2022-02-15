@@ -55,6 +55,13 @@ except ImportError:
     PROMETHEUS_SUPPORTED = False
 
 
+try:
+    import pyparsing.exceptions as pyparse_exc
+    PARSE_EXCEPTION = pyparse_exc.ParseException
+except ImportError:
+    PARSE_EXCEPTION = pyparsing.ParseException
+
+
 ATTRGETTER_GRANULARITY = operator.attrgetter("granularity")
 LOG = logging.getLogger(__name__)
 
@@ -1328,7 +1335,7 @@ class QueryStringSearchAttrFilter(object):
     def _parse(cls, query):
         try:
             parsed_query = cls.expr.parseString(query, parseAll=True)[0]
-        except pyparsing.ParseException as e:
+        except PARSE_EXCEPTION as e:
             raise abort(400, "Invalid filter: %s" % str(e))
         return cls._parsed_query2dict(parsed_query)
 

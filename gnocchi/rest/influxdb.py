@@ -35,6 +35,13 @@ except ImportError:
     uwsgi = None
 
 
+try:
+  import pyparsing.exceptions as pyparse_exc
+  PARSE_EXCEPTION = pyparse_exc.ParseException
+except ImportError:
+  PARSE_EXCEPTION = pyparsing.ParseException
+
+
 LOG = daiquiri.getLogger(__name__)
 
 
@@ -124,7 +131,7 @@ class InfluxDBController(rest.RestController):
         if q is not None:
             try:
                 query = query_parser.parseString(q)
-            except pyparsing.ParseException:
+            except PARSE_EXCEPTION:
                 api.abort(501, {"cause": "Not implemented error",
                                 "detail": "q",
                                 "reason": "Query not implemented"})
@@ -186,7 +193,7 @@ class InfluxDBController(rest.RestController):
                         line_protocol.parseString(line.decode())
                     )
                 except (UnicodeDecodeError, SyntaxError,
-                        pyparsing.ParseException):
+                        PARSE_EXCEPTION):
                     api.abort(400, {
                         "cause": "Value error",
                         "detail": "line",

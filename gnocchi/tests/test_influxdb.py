@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import numpy
-import pyparsing
+import pyparsing.exceptions
 
 from gnocchi.rest import influxdb
 from gnocchi.tests import base
@@ -168,7 +168,7 @@ class TestInfluxDBLineProtocol(base.BaseTestCase):
             "foobar,tag=value field=string 123",
         )
         for line in lines:
-            self.assertRaises(pyparsing.ParseException,
+            self.assertRaises(pyparsing.exceptions.ParseException,
                               influxdb.line_protocol.parseString,
                               line)
 
@@ -193,6 +193,6 @@ class TestInfluxDBLineProtocol(base.BaseTestCase):
             "create stuff foobar",
         )
         for line in lines:
-            self.assertRaises(pyparsing.ParseException,
+            self.assertRaises(pyparsing.exceptions.ParseException,
                               influxdb.query_parser.parseString,
                               line)
