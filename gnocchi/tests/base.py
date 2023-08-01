@@ -30,6 +30,7 @@ try:
     from swiftclient import exceptions as swexc
 except ImportError:
     swexc = None
+from sqlalchemy import exc as sqla_exc
 from testtools import testcase
 
 from gnocchi import archive_policy
@@ -213,12 +214,24 @@ class CaptureOutput(fixtures.Fixture):
         return self.logs.read()
 
 
+class WarningsFixture(fixtures.Fixture):
+    def setUp(self):
+        super().setUp()
+
+        warnings.simplefilter('once', DeprecationWarning)
+        warnings.filterwarnings(
+            'error',
+            category=sqla_exc.SADeprecationWarning)
+
+
 class BaseTestCase(testcase.TestCase):
     def setUp(self):
         super(BaseTestCase, self).setUp()
 
         if not os.getenv("GNOCCHI_TEST_DEBUG"):
             self.useFixture(CaptureOutput())
+
+        self.useFixture(WarningsFixture())
 
 
 @six.add_metaclass(SkipNotImplementedMeta)
